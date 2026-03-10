@@ -75,6 +75,28 @@ from finshare import get_data_manager
 | 通达信 | ✅ | ✅ | ✅ |
 | BaoStock | ✅ | ✅ | ✅ |
 
+## 📚 支持的数据类型
+
+### 股票数据
+- A股股票实时快照、历史K线
+- 港股实时快照、历史K线
+- 美股实时快照、历史K线
+
+### 基金数据
+- 基金净值数据
+- 基金基本信息
+- ETF列表
+- LOF列表
+
+### 期货数据
+- 期货历史K线 (股指、金属、能源、化工)
+- 期货实时快照
+
+### 证券列表
+- A股股票列表
+- ETF基金列表
+- LOF基金列表
+
 ## 💡 使用示例
 
 ### 基础用法
@@ -189,6 +211,33 @@ data = eastmoney.get_historical_data('000001', start='2024-01-01')
 # 使用腾讯财经
 tencent = TencentDataSource()
 data = tencent.get_historical_data('000001', start='2024-01-01')
+```
+
+### 便捷接口 (推荐)
+
+```python
+import finshare as fs
+
+# 获取历史K线
+data = fs.get_historical_data('000001.SZ', start='2024-01-01', end='2024-01-31')
+
+# 获取实时快照
+snapshot = fs.get_snapshot_data('000001.SZ')
+
+# 批量获取快照
+snapshots = fs.get_batch_snapshots(['000001.SZ', '600519.SH'])
+
+# 获取基金净值
+fund_data = fs.get_fund_nav('161039', '2024-01-01', '2024-12-31')
+
+# 获取期货K线
+future_data = fs.get_future_kline('cu0', '2024-06-01', '2024-07-17')
+
+# 获取股票列表
+stocks = fs.get_stock_list()
+
+# 获取ETF列表
+etfs = fs.get_etf_list()
 ```
 
 ## 🌟 为什么选择 finshare？
