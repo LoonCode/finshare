@@ -398,6 +398,12 @@ class EastMoneyDataSource(BaseDataSource):
                 elif market_str == "BJ":
                     market = 0
                     return f"{market}.{num_code}"
+                elif market_str == "HK":
+                    market = 116
+                    return f"{market}.{num_code}"
+                elif market_str == "US":
+                    market = 105
+                    return f"{market}.{num_code}"
 
         # 判断市场 (旧格式 SZ000001)
         if full_code.startswith("SH"):

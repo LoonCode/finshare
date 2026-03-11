@@ -383,7 +383,15 @@ class FeatureClient:
             ])
 
         try:
+            if not data:
+                return pd.DataFrame(columns=[
+                    "fs_code", "trade_date", "broker_name", "buy_amount", "sell_amount", "net_amount"
+                ])
             result = data.get("result", {})
+            if not result:
+                return pd.DataFrame(columns=[
+                    "fs_code", "trade_date", "broker_name", "buy_amount", "sell_amount", "net_amount"
+                ])
             data_list = result.get("data", [])
 
             if not data_list:
@@ -534,7 +542,15 @@ class FeatureClient:
             ])
 
         try:
+            if not data:
+                return pd.DataFrame(columns=[
+                    "fs_code", "trade_date", "rzye", "rqyl", "rzrqye"
+                ])
             result = data.get("result", {})
+            if not result:
+                return pd.DataFrame(columns=[
+                    "fs_code", "trade_date", "rzye", "rqyl", "rzrqye"
+                ])
             data_list = result.get("data", [])
 
             if not data_list:
