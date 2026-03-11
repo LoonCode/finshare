@@ -11,8 +11,8 @@ finshare | 专业的金融数据获取工具库
    :target: https://pypi.org/project/finshare/
    :alt: PyPI
 
-.. image:: https://img.shields.io/pypi/pyversions/finshare: https://p
-   :targetypi.org/project/finshare/
+.. image:: https://img.shields.io/pypi/pyversions/finshare
+   :target: https://pypi.org/project/finshare/
    :alt: Python versions
 
 .. image:: https://img.shields.io/github/license/finvfamily/finshare
