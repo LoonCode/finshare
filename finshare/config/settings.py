@@ -5,6 +5,7 @@ finshare Config Module
 """
 
 import os
+from typing import List
 
 
 class SmartCooldownConfig:
@@ -64,7 +65,9 @@ class DataSourceConfig:
     """数据源配置"""
 
     def __init__(self):
-        self.source_priority = ["eastmoney", "tencent", "sina", "tdx", "baostock"]
+        # 默认数据源优先级（用于未匹配的市场，以及数据源初始化）
+        # 注意：这里需要包含所有可能的数据源用于初始化
+        self.source_priority = ["yahoo", "eastmoney", "tencent", "sina", "tdx", "baostock"]
         self.timeout = 30
         self.request_timeout = 30  # 请求超时时间（秒）
         self.retry_times = 3
@@ -72,6 +75,42 @@ class DataSourceConfig:
         self.max_workers = 5  # 最大并发数
         # 旧版配置，保留兼容（已废弃，使用 SmartCooldownConfig）
         self.failure_cooldown_hours = 24  # 数据源失败后的冷却时间（小时）
+
+        # 按市场类型配置数据源优先级
+        # 不同市场使用不同的数据源，以发挥各数据源的优势
+        self.market_source_priority = {
+            "US": ["yahoo", "eastmoney"],  # 美股：Yahoo Finance 优先，东方财富备选
+            "HK": ["eastmoney"],            # 港股：东方财富
+            "SH": ["eastmoney", "tdx", "baostock", "tencent", "sina"],  # 上海A股
+            "SZ": ["eastmoney", "tdx", "baostock", "tencent", "sina"],  # 深圳A股
+            "BJ": ["eastmoney", "tencent"],  # 北京A股
+        }
+
+    def get_source_priority(self, code: str) -> List[str]:
+        """
+        根据股票代码获取对应的数据源优先级
+
+        Args:
+            code: 股票代码（如 600519, AAPL.US, 00700.HK）
+
+        Returns:
+            数据源优先级列表
+        """
+        # 简单判断市场类型
+        code_upper = code.upper() if code else ""
+
+        if ".US" in code_upper or code_upper.startswith("US") or (code_upper.isalpha() and len(code_upper) <= 5):
+            return self.market_source_priority.get("US", self.source_priority)
+        elif ".HK" in code_upper or code_upper.startswith("HK"):
+            return self.market_source_priority.get("HK", self.source_priority)
+        elif code_upper.startswith("SH") or (len(code_upper) >= 1 and code_upper[0] in ["5", "6"]):
+            return self.market_source_priority.get("SH", self.source_priority)
+        elif code_upper.startswith("SZ") or (len(code_upper) >= 1 and code_upper[0] in ["0", "1", "2", "3"]):
+            return self.market_source_priority.get("SZ", self.source_priority)
+        elif code_upper.startswith("BJ") or (len(code_upper) >= 1 and code_upper[:2] in ["8", "9"]):
+            return self.market_source_priority.get("BJ", self.source_priority)
+
+        return self.source_priority
 
 
 class Config:

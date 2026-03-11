@@ -66,7 +66,7 @@ finshare 支持获取港股实时行情和历史数据。
 
     import finshare as fs
 
-    # 港股实时快照（腾讯/新浪数据源）
+    # 港股实时快照（东方财富数据源）
     snapshot = fs.get_snapshot_data('00700.HK')  # 腾讯控股
     print(f"最新价: {snapshot.last_price}")
     print(f"涨跌额: {snapshot.change}")
@@ -79,6 +79,48 @@ finshare 支持获取港股实时行情和历史数据。
     # 批量获取港股行情
     hk_stocks = ['00700.HK', '09988.HK', '9988.HK']
     snapshots = fs.get_batch_snapshots(hk_stocks)
+
+美股数据
+--------
+
+finshare 支持获取美股实时行情和历史数据。**使用 Yahoo Finance 作为首选数据源**。
+
+.. code-block:: python
+
+    import finshare as fs
+
+    # 美股实时快照（Yahoo Finance 数据源）
+    snapshot = fs.get_snapshot_data('AAPL.US')  # 苹果公司
+    print(f"最新价: {snapshot.last_price}")
+    print(f"涨跌额: {snapshot.change}")
+    print(f"涨跌幅: {snapshot.change_pct}%")
+
+    # 美股历史K线（Yahoo Finance 数据源）
+    df = fs.get_historical_data('AAPL.US', start='2024-01-01', end='2024-12-31')
+    print(df.head())
+
+    # 批量获取美股行情
+    us_stocks = ['AAPL.US', 'GOOGL.US', 'MSFT.US', 'AMZN.US']
+    snapshots = fs.get_batch_snapshots(us_stocks)
+
+支持的代码格式：
+
+.. code-block:: python
+
+    'AAPL.US'    # 标准格式（推荐）
+    'AAPL'       # 纯字母（自动识别为美股）
+    'USAAPL'     # 传统格式
+
+支持的热门股票：
+
+- AAPL - 苹果公司
+- GOOGL - Alphabet Inc.
+- MSFT - 微软公司
+- AMZN - 亚马逊公司
+- TSLA - 特斯拉公司
+- NVDA - 英伟达公司
+- META - Meta Platforms Inc.
+- NFLX - 奈飞公司
 
 期货数据
 --------

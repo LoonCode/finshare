@@ -18,7 +18,12 @@ finshare 支持多个数据源，自动故障切换，保证服务稳定性。
      - ✅
      - ✅
      - ✅
-     - 主力数据源，数据最全
+     - A股/港股/美股主力数据源
+   * - Yahoo Finance
+     - ✅
+     - ✅
+     - ❌
+     - 美股专用数据源
    * - 腾讯财经
      - ✅
      - ✅
@@ -40,16 +45,44 @@ finshare 支持多个数据源，自动故障切换，保证服务稳定性。
      - ✅
      - 数据质量好
 
+市场与数据源对应
+----------------
+
+finshare 根据不同市场自动选择最适合的数据源：
+
+.. list-table::
+   :header-rows: 1
+
+   * - 市场
+     - 数据源优先级
+     - 说明
+   * - 美股 (US)
+     - Yahoo Finance → 东方财富
+     - Yahoo 为主，失败时自动切换到东方财富
+   * - 港股 (HK)
+     - 东方财富
+     - 数据最全
+   * - 沪市A股 (SH)
+     - 东方财富
+     - 数据最全
+   * - 深市A股 (SZ)
+     - 东方财富
+     - 数据最全
+   * - 北京A股 (BJ)
+     - 东方财富 → 腾讯财经
+     - 支持北京交易所
+
 数据源优先级
 -----------
 
 finshare 默认按以下优先级尝试获取数据：
 
-1. **东方财富** - 数据最全，支持K线和快照
-2. **腾讯财经** - 速度快，支持K线和快照
-3. **新浪财经** - 仅支持快照
-4. **通达信** - 需要本地客户端
-5. **BaoStock** - 数据质量好
+1. **Yahoo Finance** - 美股专用数据源
+2. **东方财富** - A股/港股/美股主力数据源
+3. **腾讯财经** - 速度快，支持K线和快照
+4. **新浪财经** - 仅支持快照
+5. **通达信** - 需要本地客户端
+6. **BaoStock** - 数据质量好
 
 当一个数据源请求失败时，会自动切换到下一个数据源。
 
@@ -58,7 +91,7 @@ finshare 默认按以下优先级尝试获取数据：
 
 .. code-block:: python
 
-    from finshare import EastMoneyDataSource, TencentDataSource, SinaDataSource
+    from finshare import EastMoneyDataSource, TencentDataSource, SinaDataSource, YahooFinanceDataSource
 
     # 使用东方财富
     eastmoney = EastMoneyDataSource()
@@ -69,6 +102,11 @@ finshare 默认按以下优先级尝试获取数据：
     tencent = TencentDataSource()
     data = tencent.get_historical_data('000001', start='2024-01-01')
     snapshot = tencent.get_snapshot_data('000001.SZ')
+
+    # 使用 Yahoo Finance（美股专用）
+    yahoo = YahooFinanceDataSource()
+    data = yahoo.get_historical_data('AAPL.US', start='2024-01-01')
+    snapshot = yahoo.get_snapshot_data('AAPL.US')
 
     # 使用新浪财经（仅支持快照）
     sina = SinaDataSource()

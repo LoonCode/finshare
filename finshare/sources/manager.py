@@ -27,6 +27,7 @@ from finshare.sources.base_source import BaseDataSource
 from finshare.sources.tencent_source import TencentDataSource
 from finshare.sources.sina_source import SinaDataSource
 from finshare.sources.eastmoney_source import EastMoneyDataSource
+from finshare.sources.yahoo_source import YahooFinanceDataSource
 from finshare.logger import logger
 from finshare.config.settings import config
 
@@ -75,6 +76,8 @@ class DataSourceManager:
                     source = SinaDataSource()
                 elif source_name == "eastmoney":
                     source = EastMoneyDataSource()
+                elif source_name == "yahoo":
+                    source = YahooFinanceDataSource()
                 elif source_name == "baostock":
                     source = _get_baostock_source()
                 elif source_name == "tdx":
@@ -96,7 +99,7 @@ class DataSourceManager:
 
     def get_snapshot_data(self, code: str) -> Optional[SnapshotData]:
         """获取快照数据（自动选择数据源）"""
-        for source_name in config.data_source.source_priority:
+        for source_name in config.data_source.get_source_priority(code):
             if not self._is_source_available(source_name):
                 continue
 
@@ -241,7 +244,7 @@ class DataSourceManager:
         elif adjust == "hfq":
             adjustment = AdjustmentType.POST  # 后复权
 
-        for source_name in config.data_source.source_priority:
+        for source_name in config.data_source.get_source_priority(code):
             if not self._is_source_available(source_name):
                 continue
 
@@ -278,7 +281,7 @@ class DataSourceManager:
         full_codes = []
         for code in codes:
             # 尝试使用第一个可用的数据源来确保代码格式
-            for source_name in config.data_source.source_priority:
+            for source_name in config.data_source.get_source_priority(code):
                 source = self.sources.get(source_name)
                 if source and hasattr(source, "_ensure_full_code"):
                     full_codes.append(source._ensure_full_code(code))
@@ -289,7 +292,7 @@ class DataSourceManager:
         logger.debug(f"批量获取快照，输入代码: {codes}")
         logger.debug(f"批量获取快照，完整代码: {full_codes}")
 
-        for source_name in config.data_source.source_priority:
+        for source_name in config.data_source.get_source_priority(codes[0] if codes else ""):
             if not self._is_source_available(source_name):
                 continue
 
@@ -396,7 +399,7 @@ class DataSourceManager:
 
     def get_active_source(self, code: str = None) -> Optional[BaseDataSource]:
         """获取可用的数据源"""
-        for source_name in config.data_source.source_priority:
+        for source_name in config.data_source.get_source_priority(code or ""):
             if not self._is_source_available(source_name):
                 continue
 
